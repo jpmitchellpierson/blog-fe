@@ -4,18 +4,80 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 
 class NewPosts extends Component {
-  render() {
+  renderField(field) {
+    // pull meta prop off field and touched/error props off meta
+    const { meta: { touched, error } } = field;
+    // conditional styling for errors
+    const className =  `form-group ${touched && error ? 'has-danger' : ''}`
+
     return (
-      <form>
-        <Field 
-          name="title"
-          component={}
+      <div className={className}>
+        <label>{field.label}</label>
+        <input
+          className="form-control"
+          type="text"
+          // field.input is an object with props (onChange, etc.)
+          // gives this input access to all those props
+          {...field.input}
         />
+        <div className="text-help">
+          {touched ? error : ''}
+        </div>
+      </div>
+    );
+  }
+
+  onSubmit(values) {
+    console.log(values);
+  }
+
+  render() {
+    // handleSubmit is a prop being passed to components from reduxForm
+    const { handleSubmit } = this.props;
+
+    return (
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+        <Field
+          label="Post Title"
+          name="title"
+          // don't add parens b/c Field will call function on its own
+          component={this.renderField}
+        />
+        <Field
+          label="Categories"
+          name="categories"
+          component={this.renderField}
+        />
+        <Field
+          label="Post Content"
+          name="content"
+          component={this.renderField}
+        />
+        <button type="submit" className="btn btn-primary">Save</button>
       </form>
     );
-  };
-};
+  }
+}
+
+function validate(values) {
+  // console.log(values) -> { title: '', categories: '', content: '' }
+  const errors = {};
+  // Validate inputs from values
+  if (!values.title) {
+    errors.title = '* Enter a title!';
+  }
+  if (!values.categories) {
+    errors.categories = '* Enter a category!';
+  }
+  if (!values.content) {
+    errors.content = '* Enter some content!';
+  }
+  // If errors is returned empty, form will submit
+  // Else if it has any properties, redux form assumes form is invalid
+  return errors;
+}
 
 export default reduxForm({
+  validate,
   form: 'NewPostsForm'
 })(NewPosts);
