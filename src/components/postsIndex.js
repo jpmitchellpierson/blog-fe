@@ -33,8 +33,8 @@ class PostsIndex extends Component {
         </ul>
       </div>
     );
-  };
-};
+  }
+}
 
 function mapStateToProps(state) {
   return { posts: state.posts }
