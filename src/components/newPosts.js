@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 // reduxForm is a function that helps connect this component
 // to communicate with the formReducer we added in reducer index
 import { Field, reduxForm } from 'redux-form';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createPost } from '../actions';
 
 class NewPosts extends Component {
   renderField(field) {
@@ -28,7 +31,11 @@ class NewPosts extends Component {
   }
 
   onSubmit(values) {
-    console.log(values);
+    // wait until post has been created
+    // then navigate back to posts with newly created post appearing
+    this.props.createPost(values, () => {
+      this.props.history.push('/posts');
+    });
   }
 
   render() {
@@ -54,6 +61,7 @@ class NewPosts extends Component {
           component={this.renderField}
         />
         <button type="submit" className="btn btn-primary">Save</button>
+        <Link to="/" className="btn btn-danger">Cancel</Link>
       </form>
     );
   }
@@ -77,7 +85,12 @@ function validate(values) {
   return errors;
 }
 
+// layering reduxForm and connect helper functions
 export default reduxForm({
   validate,
   form: 'NewPostsForm'
-})(NewPosts);
+})(
+  // result of connect function is put in as second set of parens for reduxForm helper
+  // connect component to createPost action creator
+  connect(null, { createPost })(NewPosts)
+);
