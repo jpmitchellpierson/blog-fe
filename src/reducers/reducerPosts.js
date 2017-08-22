@@ -1,10 +1,12 @@
 import _ from 'lodash';
-import { FETCH_POSTS, FETCH_POST } from '../actions';
+import { FETCH_POSTS, FETCH_POST, DELETE_POST } from '../actions';
 
 // reducer function take previous state and an action that 
 // returns a new state object
 export default function (state = {}, action) {
   switch (action.type) {
+    case DELETE_POST:
+      return _.omit(state, action.payload);
     case FETCH_POST:
       // ES5
       // const post = action.payload.data;

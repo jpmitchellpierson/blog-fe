@@ -34,7 +34,7 @@ class NewPosts extends Component {
     // wait until post has been created
     // then navigate back to posts with newly created post appearing
     this.props.createPost(values, () => {
-      this.props.history.push('/posts');
+      this.props.history.push('/');
     });
   }
 
